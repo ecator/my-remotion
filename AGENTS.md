@@ -73,6 +73,19 @@
 3. **确定性渲染（禁止 `Math.random()`）**：
    - 渲染逻辑必须是纯函数（同一帧号在任何时候渲染结果完全一致）。需要随机数（如粒子、星空、抖动）时，**必须使用 Remotion 提供的 `random("seed")`**，严禁使用 `Math.random()`（否则多线程并发渲染时画面会剧烈闪烁）。
 
+### 4.1 中文字体注意事项
+1. **优先使用 `@remotion/google-fonts`**：已预装。中文字体按模块导入，如 `import { loadFont } from "@remotion/google-fonts/NotoSansSC"`。常用选择：
+   - 黑体：`NotoSansSC`（繁体 `NotoSansTC`）
+   - 宋体：`NotoSerifSC`（繁体 `NotoSerifTC`）
+   - 手写/艺术体：`MaShanZheng`、`ZCOOLKuaiLe`、`ZCOOLXiaoWei`、`LongCang`、`LiuJianMaoCao`
+2. **必须限定字重**：中文字体体积大，务必只加载实际用到的字重，如 `loadFont("normal", { weights: ["400", "700"] })`，切勿加载全部字重。
+3. **了解分片（subset）机制**：中文字体被 Google Fonts 拆成大量 unicode-range 分片（如 `"[0]"`、`"[1]"`…）加 `latin`。不传 `subsets` 会加载全部分片（Studio 中请求多、加载慢）；只需渲染固定文案时，可通过 `subsets` 指定所需分片。
+4. **在顶层模块加载并带回 `fontFamily`**：在组件文件顶层调用 `loadFont()`，使用其返回的 `fontFamily` 设置样式，不要硬编码字体名；需要确保字体就绪时使用返回的 `waitUntilDone()`。
+5. **必须设置回退字体**：`fontFamily` 末尾追加中文系统字体兜底，例如 `` `${fontFamily}, "PingFang SC", "Microsoft YaHei", sans-serif` ``，避免字体加载失败时中文显示为方框。
+6. **自定义/商用字体放 `public/`**：若使用本地 `.woff2/.ttf`，放入 `public/shared/fonts/`（或 `public/<VideoName>/`），通过 `@remotion/fonts` 的 `loadFont({ family, url: staticFile(...) })` 加载。注意字体授权，商用须确认可商用。
+7. **排版注意**：中文无空格分词，长句请显式控制换行宽度（可配合 `@remotion/layout-utils` 测量文字尺寸防溢出）；中文行高建议 1.4–1.6；中文标点（，。、）注意不要出现在行首。
+8. **视觉自检**：涉及中文的画面，用 `remotion still` 导出关键帧到 `scratch/` 检查是否有方框（缺字）、字体未生效或溢出。
+
 ## 5. 开发与交付检查清单
 在每次完成用户的视频创建或修改任务前，请确认：
 - [ ] 视频目录、主组件及 `<Composition id>` 是否使用了合法的英文大驼峰（PascalCase）命名？
