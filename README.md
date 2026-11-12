@@ -1,54 +1,19 @@
-# Remotion video
+# Remotion Lab
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+一个AI驱动的remotion视频生成模板。
 
-Welcome to your Remotion project!
+生成视频的时候不建议直接更新这个分支，而是通过`worktree`创建新的分支。
 
-## Commands
+## 启动
 
-**Install Dependencies**
+可以通过下面命令启动studio可视化预览和导出。
 
-```console
-pnpm i
+```bash
+pnpm dev
 ```
 
-**Start Preview**
+手动命令导出也可以使用下面的命令。
 
-```console
-pnpm run dev
+```bash
+pnpm exec remotion render HelloWorld
 ```
-
-**Render video**
-
-```console
-pnpm exec remotion render
-```
-
-**Upgrade Remotion**
-
-```console
-pnpm exec remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
-
-## License
-
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).

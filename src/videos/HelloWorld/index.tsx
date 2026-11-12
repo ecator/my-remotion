@@ -1,3 +1,4 @@
+import { zColor } from "@remotion/zod-types";
 import {
   AbsoluteFill,
   Easing,
@@ -6,13 +7,16 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Logo } from "./HelloWorld/Logo";
-import { Title } from "./HelloWorld/Title";
+import { z } from "zod";
+import { Logo } from "./Logo";
+import { Title } from "./Title";
 
-export type HelloWorldProps = {
-  readonly titleText: string;
-  readonly titleColor: string;
-};
+export const helloWorldSchema = z.object({
+  titleText: z.string(),
+  titleColor: zColor(),
+});
+
+export type HelloWorldProps = z.infer<typeof helloWorldSchema>;
 
 export const HelloWorld: React.FC<HelloWorldProps> = ({
   titleText,
