@@ -8,3 +8,5 @@ out
 
 # Ignore temporary scripts and intermediate files
 scratch/
+
+build/
