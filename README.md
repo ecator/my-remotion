@@ -17,3 +17,7 @@ pnpm dev
 ```bash
 pnpm exec remotion render HelloWorld
 ```
+
+## 多媒体生成
+
+可以使用`.agents\skills\google-genmedia-toolkit`技能生成视频或者配音，前提是要设置好`GEMINI_API_KEY`环境变量以及安装好[uv](https://docs.astral.sh/uv/getting-started/installation/)。
