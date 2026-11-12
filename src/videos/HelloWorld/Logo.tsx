@@ -26,10 +26,10 @@ const LogoInner: React.FC<LogoProps> = ({ logoColor1, logoColor2, style }) => {
         position: "absolute",
         left: "50%",
         top: "50%",
-        width: 500,
-        height: 500,
-        marginLeft: -250,
-        marginTop: -250,
+        width: 520,
+        height: 520,
+        marginLeft: -260,
+        marginTop: -260,
         scale: interpolate(frame, [0, fps], [0, 1], {
           easing: Easing.spring({ mass: 0.5 }),
           output: "perceptual-scale",
@@ -43,29 +43,25 @@ const LogoInner: React.FC<LogoProps> = ({ logoColor1, logoColor2, style }) => {
         ...style,
       }}
     >
-      <Arc
-        rotation={30}
-        color1={logoColor1}
-        color2={logoColor2}
-      />
-      <Arc
-        rotation={90}
-        color1={logoColor1}
-        color2={logoColor2}
-      />
-      <Arc
-        rotation={-30}
-        color1={logoColor1}
-        color2={logoColor2}
-      />
+      <Arc rotation={30} color1={logoColor1} color2={logoColor2} />
+      <Arc rotation={90} color1={logoColor1} color2={logoColor2} />
+      <Arc rotation={-30} color1={logoColor1} color2={logoColor2} />
       <Atom color1={logoColor1} color2={logoColor2} />
     </Interactive.Div>
   );
 };
 
 const logoSchema = {
-  logoColor1: { type: "color", default: "#91EAE4", description: "First logo color" },
-  logoColor2: { type: "color", default: "#86A8E7", description: "Second logo color" },
+  logoColor1: {
+    type: "color",
+    default: "#E11D48",
+    description: "Sherry Crimson (Primary)",
+  },
+  logoColor2: {
+    type: "color",
+    default: "#38BDF8",
+    description: "Haibara Cyan (Secondary)",
+  },
 } as const satisfies InteractivitySchema;
 
 export const Logo = Interactive.withSchema({
