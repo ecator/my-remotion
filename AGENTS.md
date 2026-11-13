@@ -20,6 +20,9 @@
 由于本仓库会承载多个视频的开发，必须保持清晰、隔离的目录结构：
 
 ```text
+├── docs/                   # 视频参考文档目录（供人与 AI 参考的脚本、分镜、文献等，不参与渲染）
+│   ├── shared/             # 跨视频通用文档（品牌规范、风格指南、写作模板等）
+│   └── <VideoName>/        # 对应视频的专属参考文档（script.md、storyboard.md、refs/ 等）
 ├── public/                 # 最终嵌入视频的静态媒体资源目录
 │   ├── shared/             # 跨视频复用的公共静态资源（通用字体、品牌 Logo、通用音效/BGM 等）
 │   └── <VideoName>/        # 对应视频的专属媒体素材（配音、专属图片、视频片段等）
@@ -68,6 +71,26 @@
    - **成品媒体文件**（如合成好的 `.mp3`/`.wav` 音频、处理好的图片/视频）$\rightarrow$ 移入 `public/<VideoName>/`（若为通用素材则移入 `public/shared/`）。
    - **成品数据文件**（如转换对齐好的字幕 `.json`/`.ts`、分镜配置数据）$\rightarrow$ 移入 `src/videos/<VideoName>/`（或直接内联到组件代码中）。
 
+### 3.4 参考文档规范（`docs/`）
+1. **用途**：`docs/` 用来存放**供人与 AI 共同参考、不参与渲染**的视频参考文档，如脚本/旁白原稿、分镜说明、需求与修改记录、参考文献、参考截图、链接清单等。既可以是 AI 产出供人审阅的文档，也可以是**用户提供给 AI 作为创作依据的输入资料**。
+2. **目录划分规则（与 `public/`、`src/videos/` 保持一致）**：
+   - **视频专属文档（`docs/<VideoName>/`）**：目录名与 `src/videos/<VideoName>/` 完全一致（英文 PascalCase）。推荐结构：
+     ```text
+     docs/<VideoName>/
+     ├── script.md        # 脚本 / 旁白原稿
+     ├── storyboard.md    # 分镜说明
+     ├── notes.md         # 需求、沟通与修改记录
+     └── refs/            # 参考文献、PDF、参考截图、links.md（外部链接清单）
+     ```
+   - **跨视频通用文档（`docs/shared/`）**：品牌规范、视觉风格指南、通用脚本模板等。
+3. **原稿与渲染数据分离**：`docs/` 中的文档**不得被视频组件 `import` 或通过 `staticFile()` 引用**。从原稿中整理出的、渲染时实际需要的结构化数据（字幕、分镜配置等），必须按 3.1 规范放入 `src/videos/<VideoName>/`。
+4. **禁止放入其他目录**：参考文档**不要放进 `public/`**（会被复制进渲染 bundle，增加体积）、**不要放进 `src/`**（与代码混杂）、**不要放进 `scratch/`**（被 Git 忽略，会丢失）。
+5. **AI 协作约定**：
+   - **先读后做**：开始开发或修改某个视频前，AI 必须先阅读 `docs/<VideoName>/`（及相关的 `docs/shared/`）中的全部资料，将其作为需求、脚本、风格与事实依据；用户放入的参考资料优先级高于 AI 的自行推断。
+   - **产出回写**：AI 为视频撰写或修改脚本、分镜、调研资料时，应直接写入 `docs/<VideoName>/` 对应文件，便于用户审阅和后续迭代。
+   - **尊重用户原稿**：用户提供的原始资料（尤其是 `refs/` 中的文献与素材）应视为只读输入，如需整理或改写，请另建文件，不要直接覆盖原稿。
+6. **大文件处理**：体积较大的二进制参考资料（大型 PDF、参考视频等）应尽量以链接形式记录在 `refs/links.md` 中，避免仓库体积膨胀；确需入库时考虑使用 Git LFS。
+
 ## 4. Remotion 动画与编码核心铁律
 1. **严禁使用 CSS 动画与非帧驱动定时器**：
    - **禁止**使用 CSS `transition`、`animation`、`@keyframes`、Tailwind `animate-*` 或 `setTimeout` / `requestAnimationFrame` 实现动画（Remotion 渲染时基于帧号逐帧截图，非帧驱动动画会导致导出视频卡顿、掉帧或完全静止）。
@@ -97,6 +120,7 @@
 - [ ] 视频组件的复杂 `props` 是否已使用 `zod`（及 `@remotion/zod-types`）定义 Schema 并在 `<Composition schema={...} />` 中绑定？
 - [ ] 视频所需的最终音频、图片、视频等媒体素材是否已放入 `public/<VideoName>/`（或 `public/shared/`）并通过 `staticFile()` 引用？
 - [ ] 字幕与 JSON 结构化数据是否已放入 `src/videos/<VideoName>/` 并通过 `import` 或内联方式同步使用？
+- [ ] 脚本原稿、分镜说明、参考文献等参考文档是否已放入 `docs/<VideoName>/`（或 `docs/shared/`），且未被视频组件引用？
 - [ ] 临时脚本、中间文件及 `remotion still` 导出的自检截图是否都放在了 `scratch/` 目录下，没有污染项目根目录或 `src/`？
 - [ ] 是否已运行 `pnpm lint` 确保没有 TypeScript 类型错误或 ESLint 报错？
 - [ ] 若用户未要求导出视频，是否遵循了“不主动导出、不主动运行 `pnpm dev`，仅提示用户运行 `pnpm dev` 预览”的原则？
