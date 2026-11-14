@@ -6,10 +6,11 @@
 本仓库是一个使用 [Remotion](https://www.remotion.dev/) 生成视频的工程模板，用于在同一个工作区中开发、维护和生成多个不同的视频项目。
 
 ## 2. 包管理与常用命令规范
-- **包管理工具**：本项目统一使用 **`pnpm`**（请勿使用 `npm`、`npx`、`yarn` 或 `bun`/`bunx` 安装依赖或管理锁文件）。
+- **Node.js 包管理工具**：本项目统一使用 **`pnpm`**（请勿使用 `npm`、`npx`、`yarn` 或 `bun`/`bunx` 安装依赖或管理锁文件）。
   - 安装依赖：`pnpm add <pkg>` / `pnpm install`
   - 安装 Remotion 官方包：`pnpm exec remotion add <pkg>`
   - 类型与代码检查：`pnpm lint`
+- **Python 临时脚本与依赖管理**：编写 Python 辅助脚本（置于 `scratch/`）时，优先使用 **PEP 723 Script Inline Metadata** 将依赖直接声明在脚本内，并通过 **`uv run scratch/<script>.py`** 运行，避免使用 `pip install` 污染全局环境（详见 3.3 节）。
 - **禁止主动启动预览服务**：**请勿主动运行 `pnpm dev` 或 `remotion studio`**（避免后台进程阻塞或端口冲突）。代码编写完成后，请**提示用户在终端自行运行 `pnpm dev`** 在 Remotion Studio 中查看与预览效果。
 - **禁止主动导出视频**：在用户**没有明确要求导出/渲染视频**时，**请勿主动运行视频导出命令**（如 `pnpm exec remotion render`）。仅当用户明确发出导出指令时才执行渲染，输出目录默认为 `out/`。
 - **单帧截图导出与视觉自检（`remotion still`）**：
@@ -67,7 +68,19 @@
 ### 3.3 临时文件与脚本规范（`scratch/`）
 1. **临时文件集中存放**：开发过程中需要编写的**一次性辅助脚本**（如配音 TTS 生成脚本、Whisper 语音转录脚本、字幕清洗与时间轴对齐脚本、素材预处理脚本等）、产生的**中间临时文件**，以及**通过 `remotion still` 导出的单帧截图**，必须全部放在项目根目录的 `scratch/` 文件夹下。
 2. **版本控制忽略**：`scratch/` 文件夹已被写入 `.gitignore` 忽略版本管理，可以在其中自由创建和调试临时内容。
-3. **产物交接**：当 `scratch/` 中的脚本生成了最终产物后，必须按类型移入正式目录供视频组件引用：
+3. **Python 临时脚本规范（Inline Script Metadata + `uv`）**：
+   - 编写 Python 临时脚本时，**优先使用 PEP 723（Script Inline Metadata）在脚本头部直接声明依赖**，并通过 **`uv run`** 执行，严禁直接使用 `pip install` 污染全局环境或在项目根目录创建虚拟环境：
+     ```python
+     # /// script
+     # requires-python = ">=3.11"
+     # dependencies = [
+     #     "pillow",
+     #     "requests",
+     # ]
+     # ///
+     ```
+   - 运行方式：`uv run scratch/<script_name>.py`（`uv` 会自动在隔离缓存环境中解析并安装头部声明的依赖，也可通过 `uv add --script scratch/<script_name>.py <pkg>` 自动写入依赖）。
+4. **产物交接**：当 `scratch/` 中的脚本生成了最终产物后，必须按类型移入正式目录供视频组件引用：
    - **成品媒体文件**（如合成好的 `.mp3`/`.wav` 音频、处理好的图片/视频）$\rightarrow$ 移入 `public/<VideoName>/`（若为通用素材则移入 `public/shared/`）。
    - **成品数据文件**（如转换对齐好的字幕 `.json`/`.ts`、分镜配置数据）$\rightarrow$ 移入 `src/videos/<VideoName>/`（或直接内联到组件代码中）。
 
@@ -121,6 +134,6 @@
 - [ ] 视频所需的最终音频、图片、视频等媒体素材是否已放入 `public/<VideoName>/`（或 `public/shared/`）并通过 `staticFile()` 引用？
 - [ ] 字幕与 JSON 结构化数据是否已放入 `src/videos/<VideoName>/` 并通过 `import` 或内联方式同步使用？
 - [ ] 脚本原稿、分镜说明、参考文献等参考文档是否已放入 `docs/<VideoName>/`（或 `docs/shared/`），且未被视频组件引用？
-- [ ] 临时脚本、中间文件及 `remotion still` 导出的自检截图是否都放在了 `scratch/` 目录下，没有污染项目根目录或 `src/`？
+- [ ] 临时脚本、中间文件及 `remotion still` 导出的自检截图是否都放在了 `scratch/` 目录下（Python 脚本是否已使用 Inline Script Metadata 并通过 `uv run` 执行），没有污染全局环境、项目根目录或 `src/`？
 - [ ] 是否已运行 `pnpm lint` 确保没有 TypeScript 类型错误或 ESLint 报错？
 - [ ] 若用户未要求导出视频，是否遵循了“不主动导出、不主动运行 `pnpm dev`，仅提示用户运行 `pnpm dev` 预览”的原则？
