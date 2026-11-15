@@ -2,23 +2,23 @@
 
 一个AI Agent工具驱动的[Remotion](https://www.remotion.dev/)视频生成模板，几乎所有支持Skill的Agent工具都可以直接套用这个模板生成视频。
 
-生成视频的时候不建议直接更新这个分支，而是通过`worktree`创建新的分支。
+> ⚠️生成视频的时候不建议直接更新这个分支，而是通过`worktree`创建新的分支，大的媒体文件也不建议直接托管到Git，可以尝试使用[git-lfs](https://git-lfs.com/)进行管理。
 
 ## 启动
 
-首先通过下面命令安装好依赖。
+准备好[Node.js](https://nodejs.org/en/download)和[pnpm](https://pnpm.io/installation)环境后通过下面命令安装好依赖。
 
 ```bash
 pnpm install
 ```
 
-然后就可以通过下面命令启动studio可视化预览和导出。
+然后就可以通过下面命令启动studio网页端可视化预览和导出。
 
 ```bash
 pnpm dev
 ```
 
-有时候studio可能导出失败可以尝试手动命令导出。
+有时候studio网页端可能导出失败可以尝试手动命令导出。
 
 ```bash
 pnpm exec remotion render HelloWorld
@@ -26,9 +26,22 @@ pnpm exec remotion render HelloWorld
 
 ## 多媒体生成以及临时脚本
 
-建议提前安装好[uv](https://docs.astral.sh/uv/getting-started/installation/)这样AI可以方便生成一些Python临时脚本进行自动化人物。
+建议提前安装好下面的工具，这样方便AI进行一些自动化任务，临时脚本会被放在`scratch/`目录。
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+  - Python环境依赖自动化
+- [ffmpeg](https://ffmpeg.org/)
+  - 多媒体文件转换
+- [gemini-api-cli](https://aistudio.google.com/docs/cli#get-started)
+  - Gmeini API的CLI工具，主要用于合成一些图片或者音乐，需要设置`GEMINI_API_KEY`环境变量或者运行`gemini-api configure --api-key "YOUR_API_KEY"`命令配置API Key
 
-AI可以使用`.agents\skills\use-gemini-api-cli`技能生成视频或者配音，前提是要安装[gemini-api-cli](https://aistudio.google.com/docs/cli#get-started)并设置好`GEMINI_API_KEY`环境变量。
+下面的环境变量也需要提前设置，否则相关服务可能无法使用。
+- Azure TTS相关服务
+  - `AZURE_TTS_KEY`
+    - Azure语音服务的订阅Key
+  - `AZURE_TTS_REGION`
+    - Azure语音服务部署的区域，比如`japanwest`
+- Gemini相关服务
+  - `GEMINI_API_KEY`
 
 ## 参考文档与资料存放（`docs/`）
 
