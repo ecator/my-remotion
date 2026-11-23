@@ -1,0 +1,64 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://hyperframes.heygen.com/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Add an AI avatar presenter to a video
+
+> Put a HeyGen avatar on screen to present your video, with HyperFrames building the scenes, graphics and captions around them.
+
+An avatar is a HeyGen presenter who reads your script on camera. HyperFrames builds everything around them: the
+scenes, charts, captions and music, all still editable.
+
+<video aria-label="Code2Video Bench, presented by an avatar" src="https://static.heygen.ai/hyperframes-oss/homepage/showcase/hq/explainer-code2video-bench-v1.mp4" poster="https://static.heygen.ai/hyperframes-oss/homepage/showcase/poster/explainer-code2video-bench-v1.jpg" playsInline preload="metadata" />
+
+*A presenter explains benchmark results while the charts and numbers are built around them.*
+
+## Make it
+
+In the Studio app or with your own agent, say where the presenter appears and what they say:
+
+```text theme={null}
+A 30-second product update. A presenter opens with: "This week we shipped three things."
+Then show each feature full screen with captions, and bring the presenter back to close.
+```
+
+Name the avatar and voice if you have them (your own digital twin, or one from HeyGen's library), or describe who
+you want and let the agent pick. Avatars are made by HeyGen, so they need your HeyGen account: in the Studio app add a
+HeyGen API key; with your own agent, install the [HeyGen CLI](https://developers.heygen.com/cli) and sign in with
+`heygen auth login --oauth`. Avatars use HeyGen credits: your plan's credits with that sign-in, API credits with an
+API key.
+
+**Already recorded yourself?** Skip the avatar: add your clip and see
+[captions and recuts](https://hyperframes.heygen.com/guides/captions-and-recuts.md). **Want only the presenter, nothing designed around them?** Make it
+in HeyGen directly; it won't be an editable HyperFrames project.
+
+## What it can do around the presenter
+
+* Put them beside, in front of or behind your scenes. With the background removed
+  ([how](https://hyperframes.heygen.com/guides/remove-background.md)), titles can pass behind them.
+* Cut away to full-screen product shots or charts and back.
+* Caption what they actually said, word by word.
+* Keep the clip as a file in the project, so the render never depends on a download.
+
+## Check before you share
+
+* The presenter says the approved words, with names and numbers right.
+* They never cover the product or the point of the shot.
+* Music stays under the voice.
+* You watched the whole thing once, with sound.
+
+## Related topics
+
+* [Remove a video background](https://hyperframes.heygen.com/guides/remove-background.md)
+* [Add captions to a video](https://hyperframes.heygen.com/guides/captions-and-recuts.md)
+* [HeyGen CLI and avatar options](https://developers.heygen.com/cli)
+
+
+## Related topics
+
+- [Make clips with HeyGen Video 1](https://hyperframes.heygen.com/studio-app/video-clips.md)
+- [Add captions to a video with AI](https://hyperframes.heygen.com/guides/captions-and-recuts.md)
+- [Remove a video background](https://hyperframes.heygen.com/guides/remove-background.md)
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

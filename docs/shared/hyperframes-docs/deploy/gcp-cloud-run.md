@@ -1,0 +1,142 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://hyperframes.heygen.com/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Google Cloud Run
+
+> Deploy distributed HyperFrames rendering to Cloud Run, Cloud Workflows, and Google Cloud Storage.
+
+Use this path when renders must run in your Google Cloud account. A Cloud
+Workflow plans the render, sends chunks to Cloud Run in parallel, and assembles
+the result in Google Cloud Storage.
+
+```text theme={null}
+Cloud Workflow: Plan → Render chunks in parallel → Assemble
+                         ↓
+                  Cloud Run service
+                         ↓
+                         GCS
+```
+
+For a hosted render without infrastructure ownership, use
+[HyperFrames Cloud](https://hyperframes.heygen.com/deploy/cloud.md). For a small preview application and render
+endpoint, use a [hosted template](https://hyperframes.heygen.com/guides/deploy.md).
+
+## Prerequisites
+
+* A Google Cloud project with billing enabled
+* `gcloud` authenticated for that project
+* Terraform 1.5 or newer
+* Cloud Build access, or an existing compatible container image
+* `@hyperframes/gcp-cloud-run` installed alongside the CLI
+
+The CLI can build the renderer automatically when it runs from a HyperFrames
+repository checkout. Outside the repository, pass an image built from
+`packages/gcp-cloud-run/Dockerfile` with `--image`.
+
+The renderer image uses Chrome 158, matching the CLI's managed browser, so
+gradient text inside transformed child elements also renders in Cloud Run.
+Existing deployments need a rebuilt image and a new deployment to receive
+the browser update.
+
+## Deploy
+
+```bash theme={null}
+hyperframes cloudrun deploy --project my-gcp-project
+```
+
+The command enables the required Google Cloud APIs, builds and pushes the
+renderer when needed, applies the bundled Terraform module, and stores the
+resulting bucket, service URL, and workflow name in `~/.hyperframes/`.
+
+The default region is `us-central1`. Machine and scaling controls include
+`--region`, `--cpu`, `--memory`, `--max-instances`, and `--timeout`.
+
+## Render
+
+Width and height describe the authored canvas. Use `--output-resolution` when
+the encoded result should be supersampled without changing the layout.
+
+```bash theme={null}
+hyperframes cloudrun render ./my-project \
+  --width 1920 \
+  --height 1080 \
+  --wait
+```
+
+The command accepts the same template variables used by local and AWS renders:
+
+```bash theme={null}
+hyperframes cloudrun render ./card-template \
+  --width 1920 \
+  --height 1080 \
+  --variables '{"name":"Ada"}' \
+  --wait
+```
+
+Supported distributed outputs are MP4, MOV, WebM, and PNG sequences. MP4 can
+use H.264 or H.265. Distributed rendering is currently SDR-only.
+
+## Reuse an upload
+
+Projects are content-addressed. Upload an unchanged project once, then reuse
+its site ID for later renders. Site IDs from earlier versions keep working, but
+the ID scheme changed, so each project uploads once more under a new ID:
+
+```bash theme={null}
+hyperframes cloudrun sites create ./my-project
+```
+
+Use `render-batch` with a JSONL file when one template needs many sets of
+variables:
+
+```bash theme={null}
+hyperframes cloudrun render-batch ./card-template \
+  --batch ./recipients.jsonl \
+  --width 1920 \
+  --height 1080 \
+  --max-concurrent 10
+```
+
+Each JSONL row contains an output key and optional variables:
+
+```json theme={null}
+{"outputKey":"renders/ada.mp4","variables":{"name":"Ada"}}
+```
+
+## Progress and teardown
+
+Without `--wait`, a render returns its workflow execution name immediately.
+
+```bash theme={null}
+hyperframes cloudrun progress <execution-name>
+hyperframes cloudrun destroy --project my-gcp-project
+```
+
+`destroy` removes the Terraform-managed stack and its render bucket. Download
+anything that must be retained before running it.
+
+## Programmatic use
+
+`@hyperframes/gcp-cloud-run/sdk` exposes `deploySite`, `renderToCloudRun`, and
+`getRenderProgress` for Node backends. The package also exports the Terraform
+module and HTTP handler used by the deployed service.
+
+See the [GCP package reference](https://hyperframes.heygen.com/packages/gcp-cloud-run.md) for the SDK contract
+and the complete infrastructure shape.
+
+## Related topics
+
+* [Use the Google Cloud Run package](https://hyperframes.heygen.com/packages/gcp-cloud-run.md)
+* [Choose another rendering path](https://hyperframes.heygen.com/deploy/overview.md)
+* [Compare with AWS Lambda](https://hyperframes.heygen.com/deploy/aws-lambda.md)
+
+
+## Related topics
+
+- [@hyperframes/gcp-cloud-run](https://hyperframes.heygen.com/packages/gcp-cloud-run.md)
+- [Cloud rendering](https://hyperframes.heygen.com/deploy/cloud.md)
+- [Changelog](https://hyperframes.heygen.com/changelog.md)
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

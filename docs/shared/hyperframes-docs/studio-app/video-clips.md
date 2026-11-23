@@ -1,0 +1,79 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://hyperframes.heygen.com/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Make clips with HeyGen Video 1
+
+> Generate an AI video clip up to a minute long with HeyGen Video 1 in the HyperFrames Studio app, and put it straight into your project.
+
+**HeyGen Video 1** generates one unbroken shot from a description, up to a minute long. The clip lands in your
+project's files, and the agent places it on the timeline.
+
+## Ask the agent for a clip
+
+<video aria-label="Tools (#), then HeyGen Video 1" poster="/public/images/studio-app/spots/video1-tool-v2.jpg" playsInline preload="none" />
+
+**1. Open Tools**
+
+In the chat, type **#** to open **HyperFrames tools**, then pick **HeyGen Video 1**.
+
+**2. Set the length**
+
+Choose the length pill to open **Length in seconds**. A clip can be 5 to 60 seconds; it starts at 15.
+
+**3. Describe the shot**
+
+Say what happens, how the camera moves and how it should look, then send. The agent makes the clip and puts it on
+the timeline.
+
+You can steer the clip in the same message:
+
+* **Start from a picture**: give an image and it becomes the clip's exact first frame.
+* **Match a look**: give up to 9 reference images.
+* **Copy a movement**: give one reference video of 5 seconds or less (trim a longer one first; the app refuses it), plus a picture of the person who should do the move. The clip is then one take of up to 15 seconds, with no start picture.
+* **Shape**: 16:9, 9:16 or 1:1, at 480p or 768p (768p is the default).
+
+## Or use Generate media
+
+**Generate media** makes a clip without a chat message. Find it on an empty timeline, or in the words bar. Choose **Video**, pick the **Video 1** model,
+set **Quality**, and add a **Start from** picture if you want one. This form makes clips of 5 to 15 seconds, in 16:9 or
+9:16. The same form also offers **H3 Max** and **Seedance**.
+
+## Change a clip you already have
+
+Select a video in the preview and choose **Generate media** in the bar above it. Describe the change ("make it snow",
+"turn it into a night scene") and choose **Make**. The bar shows what it will cost at most and what's left on your key
+before you start.
+
+<video aria-label="Select a clip, Generate media, describe the change, Make" src="https://static.heygen.ai/hyperframes-oss/docs/studio-demos/snow-demo-v2.mp4" poster="/public/images/studio-app/snow-demo-v2.jpg" muted loop playsInline preload="metadata" />
+
+*"Make it snow": HeyGen Video 1 whitened the roof and gave her a new movement, and the new clip lands in Media.
+The wait is sped up.*
+
+Keep the clip small: a 5-second 1080p file of 7.8 MB came back with **The references are too large to send**, while
+the same shot at 720p went through.
+
+## What it costs
+
+In the chat, the agent makes the clip as soon as you ask, without a separate price check; the **Generate media**
+form shows the price before you start. It is paid from your HyperFrames plan when
+the plan covers it, otherwise from the HeyGen API credits on the key in **Settings**.
+
+If a clip stops with **Out of API credits**, add credits in HeyGen and try again. If it asks you to set up your key,
+add your HeyGen API key in **Settings**, or choose a plan.
+
+## Related topics
+
+* [Add an AI avatar presenter to a video](https://hyperframes.heygen.com/guides/avatar-presenter.md)
+* [Use images and video](https://hyperframes.heygen.com/guides/video-components.md)
+* [Edit a video with the agent](https://hyperframes.heygen.com/studio-app/edit-with-the-agent.md)
+
+
+## Related topics
+
+- [HyperFrames FAQ](https://hyperframes.heygen.com/faq.md)
+- [Make videos with a free agent](https://hyperframes.heygen.com/guides/free-agents.md)
+- [Add an AI avatar presenter to a video](https://hyperframes.heygen.com/guides/avatar-presenter.md)
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.
