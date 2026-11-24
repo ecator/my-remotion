@@ -1,11 +1,33 @@
 import { Composition } from "remotion";
 import { HelloWorld, helloWorldSchema } from "./videos/HelloWorld";
+import {
+  HfEp01IntroAndQuickstart,
+  hfEp01Schema,
+} from "./videos/HfEp01IntroAndQuickstart";
+import { EP01_TOTAL_FRAMES } from "./videos/HfEp01IntroAndQuickstart/captions";
 
 // Each <Composition> is an entry in the sidebar!
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="HfEp01IntroAndQuickstart"
+        component={HfEp01IntroAndQuickstart}
+        durationInFrames={EP01_TOTAL_FRAMES}
+        fps={30}
+        width={1920}
+        height={1080}
+        schema={hfEp01Schema}
+        defaultProps={{
+          episodeCode: "EP.01",
+          episodeTitle: "重新定义网页转视频：什么是 HyperFrames 与三大起步路径",
+          brandColor: "#10B981",
+          accentColor: "#06B6D4",
+          showSubtitles: true,
+          bgmVolume: 0.18,
+        }}
+      />
       <Composition
         // You can take the "id" to render a video:
         // pnpm remotion render HelloWorld
