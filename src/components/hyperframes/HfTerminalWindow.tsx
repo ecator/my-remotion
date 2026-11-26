@@ -1,5 +1,6 @@
 import React from "react";
-import { FONT_MONO, FONT_SANS, HF_COLORS } from "./tokens";
+import { FONT_SANS, HF_COLORS } from "./tokens";
+import { FONT_MONO_CJK, hexToRgba } from "./utils";
 
 export interface HfTerminalBlock {
   comment?: string;
@@ -12,6 +13,7 @@ export interface HfTerminalWindowProps {
   title: string;
   blocks: HfTerminalBlock[];
   activeBlockIndex?: number;
+  headerBadge?: string;
   style?: React.CSSProperties;
 }
 
@@ -19,6 +21,7 @@ export const HfTerminalWindow: React.FC<HfTerminalWindowProps> = ({
   title,
   blocks,
   activeBlockIndex,
+  headerBadge = "bash · node ≥ 22",
   style,
 }) => {
   return (
@@ -74,7 +77,7 @@ export const HfTerminalWindow: React.FC<HfTerminalWindowProps> = ({
           <span
             style={{
               marginLeft: 10,
-              fontFamily: FONT_MONO,
+              fontFamily: FONT_MONO_CJK,
               fontSize: 19,
               fontWeight: 700,
               color: HF_COLORS.textSecondary,
@@ -84,16 +87,18 @@ export const HfTerminalWindow: React.FC<HfTerminalWindowProps> = ({
           </span>
         </div>
 
-        <span
-          style={{
-            fontFamily: FONT_MONO,
-            fontSize: 17,
-            color: HF_COLORS.accentSky,
-            fontWeight: 700,
-          }}
-        >
-          bash · node ≥ 22
-        </span>
+        {headerBadge && (
+          <span
+            style={{
+              fontFamily: FONT_MONO_CJK,
+              fontSize: 17,
+              color: HF_COLORS.accentSky,
+              fontWeight: 700,
+            }}
+          >
+            {headerBadge}
+          </span>
+        )}
       </div>
 
       {/* Terminal Body */}
@@ -103,7 +108,7 @@ export const HfTerminalWindow: React.FC<HfTerminalWindowProps> = ({
           display: "flex",
           flexDirection: "column",
           gap: 14,
-          fontFamily: FONT_MONO,
+          fontFamily: FONT_MONO_CJK,
           fontSize: 21,
         }}
       >
@@ -118,7 +123,7 @@ export const HfTerminalWindow: React.FC<HfTerminalWindowProps> = ({
                 padding: "12px 16px",
                 borderRadius: 12,
                 backgroundColor: isActive
-                  ? "rgba(16, 185, 129, 0.10)"
+                  ? hexToRgba(color, 0.11)
                   : "rgba(15, 20, 31, 0.65)",
                 border: isActive
                   ? `1.5px solid ${color}`

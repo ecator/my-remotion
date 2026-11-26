@@ -7,12 +7,12 @@ import {
   useVideoConfig,
 } from "remotion";
 import {
-  FONT_MONO,
   FONT_SANS,
   HF_COLORS,
   HF_LAYOUT,
   HfChapterMeta,
 } from "./tokens";
+import { FONT_MONO_CJK, hexToRgba, padZero } from "./utils";
 
 export interface HfSeriesShellProps {
   episodeCode: string;
@@ -23,14 +23,10 @@ export interface HfSeriesShellProps {
   children: React.ReactNode;
 }
 
-function padZero(num: number, len: number): string {
-  const s = String(num);
-  return s.length >= len ? s : "0000".slice(0, len - s.length) + s;
-}
-
 function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
+  const safeSeconds = Math.max(0, seconds);
+  const mins = Math.floor(safeSeconds / 60);
+  const secs = Math.floor(safeSeconds % 60);
   return `${padZero(mins, 2)}:${padZero(secs, 2)}`;
 }
 
@@ -44,6 +40,13 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
 
+  const isDefaultBrand =
+    brandColor.toLowerCase() === HF_COLORS.brandPrimary.toLowerCase();
+  const isDefaultAccent =
+    accentColor.toLowerCase() === HF_COLORS.accentCyan.toLowerCase();
+  const brandHighlight = isDefaultBrand ? HF_COLORS.brandNeon : brandColor;
+  const accentHighlight = isDefaultAccent ? HF_COLORS.accentSky : accentColor;
+
   // Deterministic ambient dots
   const particles = useMemo(() => {
     return Array.from({ length: 18 }).map((_, i) => ({
@@ -56,8 +59,11 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
     }));
   }, []);
 
-  // Determine active chapter
-  const activeChapter = useMemo(() => {
+  // Determine active chapter (safe for empty chapters)
+  const activeChapter = useMemo<HfChapterMeta | undefined>(() => {
+    if (chapters.length === 0) {
+      return undefined;
+    }
     for (let i = chapters.length - 1; i >= 0; i--) {
       if (frame >= chapters[i].fromFrame) {
         return chapters[i];
@@ -73,7 +79,7 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
     <AbsoluteFill
       style={{
         backgroundColor: HF_COLORS.bgCanvas,
-        backgroundImage: `radial-gradient(ellipse at 50% -10%, rgba(16, 185, 129, 0.16) 0%, rgba(6, 182, 212, 0.06) 38%, rgba(7, 9, 14, 1) 75%)`,
+        backgroundImage: `radial-gradient(ellipse at 50% -10%, ${hexToRgba(brandColor, 0.16)} 0%, ${hexToRgba(accentColor, 0.06)} 38%, rgba(7, 9, 14, 1) 75%)`,
         fontFamily: FONT_SANS,
         color: HF_COLORS.textPrimary,
         overflow: "hidden",
@@ -143,12 +149,12 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
               gap: 8,
               padding: "5px 14px",
               borderRadius: 8,
-              backgroundColor: "rgba(16, 185, 129, 0.16)",
+              backgroundColor: hexToRgba(brandColor, 0.16),
               border: `1.5px solid ${brandColor}`,
-              fontFamily: FONT_MONO,
+              fontFamily: FONT_MONO_CJK,
               fontSize: 19,
               fontWeight: 700,
-              color: HF_COLORS.brandNeon,
+              color: brandHighlight,
               letterSpacing: "0.06em",
             }}
           >
@@ -157,7 +163,7 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
                 width: 8,
                 height: 8,
                 borderRadius: "50%",
-                backgroundColor: HF_COLORS.brandNeon,
+                backgroundColor: brandHighlight,
               }}
             />
             {episodeCode} // HYPERFRAMES
@@ -166,7 +172,7 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
           <span
             style={{
               color: HF_COLORS.textMuted,
-              fontFamily: FONT_MONO,
+              fontFamily: FONT_MONO_CJK,
               fontSize: 20,
             }}
           >
@@ -181,31 +187,33 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
               letterSpacing: "0.02em",
             }}
           >
-            {activeChapter?.breadcrumb}
+            {activeChapter?.breadcrumb ?? ""}
           </div>
         </div>
 
         {/* Right: Module Tag + Seekable Frame & Time Counter */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              padding: "4px 12px",
-              borderRadius: 7,
-              backgroundColor: "rgba(6, 182, 212, 0.15)",
-              border: `1.5px solid rgba(56, 189, 248, 0.45)`,
-              fontFamily: FONT_MONO,
-              fontSize: 18,
-              fontWeight: 700,
-              color: HF_COLORS.accentSky,
-              letterSpacing: "0.06em",
-            }}
-          >
-            {activeChapter?.moduleTag}
-          </div>
+          {activeChapter?.moduleTag ? (
+            <div
+              style={{
+                padding: "4px 12px",
+                borderRadius: 7,
+                backgroundColor: hexToRgba(accentColor, 0.15),
+                border: `1.5px solid ${hexToRgba(accentHighlight, 0.45)}`,
+                fontFamily: FONT_MONO_CJK,
+                fontSize: 18,
+                fontWeight: 700,
+                color: accentHighlight,
+                letterSpacing: "0.06em",
+              }}
+            >
+              {activeChapter.moduleTag}
+            </div>
+          ) : null}
 
           <div
             style={{
-              fontFamily: FONT_MONO,
+              fontFamily: FONT_MONO_CJK,
               fontSize: 19,
               fontWeight: 700,
               color: HF_COLORS.textSecondary,
@@ -245,9 +253,10 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
           backgroundColor: "rgba(9, 12, 20, 0.95)",
           borderTop: `1.5px solid ${HF_COLORS.borderSubtle}`,
           display: "grid",
-          gridTemplateColumns: chapters
-            .map((c) => `${c.durationInFrames}fr`)
-            .join(" "),
+          gridTemplateColumns:
+            chapters.length > 0
+              ? chapters.map((c) => `${c.durationInFrames}fr`).join(" ")
+              : "1fr",
           zIndex: 45,
         }}
       >
@@ -282,12 +291,12 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
                   bottom: 0,
                   width: `${isDone ? 100 : isCurrent ? localProgress : 0}%`,
                   backgroundColor: isCurrent
-                    ? "rgba(16, 185, 129, 0.28)"
-                    : "rgba(16, 185, 129, 0.12)",
+                    ? hexToRgba(brandColor, 0.28)
+                    : hexToRgba(brandColor, 0.12),
                   borderTop: isCurrent
-                    ? `2.5px solid ${HF_COLORS.brandNeon}`
+                    ? `2.5px solid ${brandHighlight}`
                     : isDone
-                      ? `2px solid ${HF_COLORS.brandPrimary}`
+                      ? `2px solid ${brandColor}`
                       : "none",
                 }}
               />
@@ -298,7 +307,7 @@ export const HfSeriesShell: React.FC<HfSeriesShellProps> = ({
                   fontSize: 16,
                   fontWeight: isCurrent ? 700 : 500,
                   color: isCurrent
-                    ? HF_COLORS.brandNeon
+                    ? brandHighlight
                     : isDone
                       ? HF_COLORS.textSecondary
                       : HF_COLORS.textMuted,
